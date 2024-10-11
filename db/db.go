@@ -10,7 +10,7 @@ var DB *sql.DB
 
 func InitDB() error {
     var err error
-    DB, err = sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/dbgo")
+    DB, err = sql.Open("mysql", "if0_37494134:Az284091@tcp(sql101.infinityfree.com:3306)/if0_37494134_dbgo")
     if err != nil {
         return err
     }
