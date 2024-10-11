@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="icon" href="https://it.msu.ac.th/wp-content/uploads/2017/01/cropped-Informatics_MSU_Logo.svg.png" type="image/png">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Noto Sans Thai Looped", sans-serif;
+            background-image: url('https://images.pexels.com/photos/28228014/pexels-photo-28228014.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            background-size: cover;
+            background-position: center;
+            color: #ffffff;
+            overflow: hidden; /* ป้องกันการเลื่อน */
+        }
+        .login-container {
+            background-color: rgba(15, 31, 66, 0.9);
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            max-width: 400px;
+            margin: auto;
+            margin-top: 100px;
+            opacity: 0;
+            transform: translateY(-30px);
+            animation: slideDown 0.5s forwards; /* การเคลื่อนไหวเข้าของกล่องล็อกอิน */
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .form-control {
+            background-color: #d5d5e0;
+            border: 2px solid #050505;
+            color: #060607;
+            transition: border-color 0.3s; /* เอฟเฟกต์การเปลี่ยนสีเส้นขอบ */
+        }
+        .form-control:focus {
+            border-color: #1b249c; /* เปลี่ยนสีเส้นขอบเมื่อฟอร์มโฟกัส */
+            box-shadow: 0 0 5px rgba(27, 36, 156, 0.5); /* เงาเมื่อฟอร์มโฟกัส */
+        }
+        .btn-primary {
+            background-color: rgba(11, 62, 172, 0.9);
+            border-color: #000000;
+            color: #ffffff;
+            transition: background-color 0.3s, transform 0.3s; /* เอฟเฟกต์การเปลี่ยนสีและการขยาย */
+        }
+        .btn-primary:hover {
+            background-color: #1b249c;
+            transform: scale(1.05); /* ขยายปุ่มเมื่อเลื่อนเมาส์ */
+        }
+        .btn-register {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: #ffffff;
+            transition: background-color 0.3s, transform 0.3s; /* เอฟเฟกต์การเปลี่ยนสีและการขยาย */
+        }
+        .btn-register:hover {
+            background-color: #218838;
+            transform: scale(1.05); /* ขยายปุ่มเมื่อเลื่อนเมาส์ */
+        }
+        .input-group-text {
+            background-color: #272d85;
+            color: #ffffff;
+            border: 2px solid #000000;
+            transition: background-color 0.3s;
+        }
+        .input-group-text:hover {
+            background-color: #1b249c; /* เปลี่ยนสีเมื่อเลื่อนเมาส์ */
+        }
+        .reset-password {
+            display: block;
+            margin-top: 10px;
+            color: #ffffff; /* สีของลิงก์รีเซ็ตรหัสผ่าน */
+            text-align: center;
+            text-decoration: underline; /* เส้นใต้ */
+            transition: color 0.3s; /* เปลี่ยนสี */
+        }
+        .reset-password:hover {
+            color: #1b249c; /* เปลี่ยนสีลิงก์เมื่อเลื่อนเมาส์ */
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 20px auto;
+            width: 150px;
+        }
+    </style>
+    <script>
+        // Prevent back navigation
+        if (window.history.length > 1) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+</head>
+<body>
+    <div class="container d-flex align-items-center justify-content-center" style="height: 100vh;">
+        <div class="login-container">
+            <img src="https://it.msu.ac.th/wp-content/uploads/2017/01/cropped-Informatics_MSU_Logo.svg.png" alt="Logo" class="logo">
+            <h2 class="text-center"> Login</h2>
+            <form id="loginForm" method="POST" action="/login" class="mt-4">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user-circle"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        </div>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                        <div class="input-group-append">
+                            <span class="input-group-text" onclick="togglePasswordVisibility()" style="cursor: pointer;"><i class="fas fa-eye"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+
+            <!-- Register button -->
+            <button id="registerButton" onclick="redirectToRegister()" class="btn btn-register d-block mx-auto mt-3 text-white">
+                <i class="fas fa-user-plus"></i> Register
+            </button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('loginForm').onsubmit = function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const formData = new FormData(this); // Get form data
+
+            // Send data to the server
+            fetch('/login', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // If the response is not OK, throw an error
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.json(); // Parse JSON if the response is OK
+            })
+            .then(data => {
+                // If login is successful, redirect to the appropriate page
+                Swal.fire({
+                    title: 'เข้าสู่ระบบสำเร็จ!',
+                    text: 'ยินดีต้อนรับ!! ' + data.username,
+                    icon: 'success',
+                    confirmButtonText: 'ตกลง'
+                }).then(() => {
+                    window.location.href = data.redirectUrl; // Redirect based on role
+                });
+            })
+            .catch(error => {
+                // Handle errors from the server
+                Swal.fire({
+                    title: 'เข้าสู่ระบบผิดพลาด!',
+                    text: error.message || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',
+                    icon: 'error',
+                    confirmButtonText: 'ตกลง'
+                });
+            });
+        };
+
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const type = passwordField.type === 'password' ? 'text' : 'password';
+            passwordField.type = type;
+        }
+
+        function redirectToRegister() {
+            // Redirect to the registration page
+            window.location.href = '/register';
+        }
+    </script>
+</body>
+</html>

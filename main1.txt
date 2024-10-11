@@ -1,0 +1,82 @@
+package main
+
+import (
+    "database/sql"
+    "fmt"
+    "html/template"
+    "net/http"
+
+    _ "github.com/go-sql-driver/mysql"
+)
+
+var db *sql.DB
+
+// Role แทนบทบาทใน dropdown
+type Role struct {
+    ID   int
+    Name string
+}
+
+// FetchRoles ดึงข้อมูลบทบาทจากฐานข้อมูล
+func FetchRoles() ([]Role, error) {
+    rows, err := db.Query("SELECT id, name FROM roles")
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var roles []Role
+    for rows.Next() {
+        var role Role
+        if err := rows.Scan(&role.ID, &role.Name); err != nil {
+            return nil, err
+        }
+        roles = append(roles, role)
+    }
+    return roles, nil
+}
+
+// RoleHandler จัดการการร้องขอสำหรับ dropdown
+func RoleHandler(w http.ResponseWriter, r *http.Request) {
+    roles, err := FetchRoles() // เปลี่ยนจาก db.FetchRoles เป็น FetchRoles
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    // โหลดเทมเพลต HTML
+    tmpl := "templates/dropdown.html"
+    t, err := template.ParseFiles(tmpl)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    // ทำการ execute เทมเพลตกับข้อมูลที่ได้
+    if err := t.Execute(w, roles); err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+}
+
+func main() {
+    var err error
+    // เชื่อมต่อกับฐานข้อมูล MySQL
+    db, err = sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/dbgo") // แก้ไขให้เหมาะสม
+    if err != nil {
+        fmt.Println("Error connecting to the database:", err)
+        return
+    }
+
+    // ตรวจสอบการเชื่อมต่อ
+    if err := db.Ping(); err != nil {
+        fmt.Println("Error pinging the database:", err)
+        return
+    }
+
+    http.HandleFunc("/", RoleHandler)
+
+    fmt.Println("Server starting on :8080")
+    if err := http.ListenAndServe(":8080", nil); err != nil {
+        fmt.Println("Error starting the server:", err)
+    }
+}

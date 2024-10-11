@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit User</title>
+    <link rel="icon" href="https://it.msu.ac.th/wp-content/uploads/2017/01/cropped-Informatics_MSU_Logo.svg.png" type="image/png">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Noto Sans Thai Looped", sans-serif;
+            background-image: url('https://images.pexels.com/photos/28228014/pexels-photo-28228014.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #ffffff;
+            overflow: hidden; /* ป้องกันการเลื่อน */
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+            background-color: rgba(15, 31, 66, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            opacity: 0; /* เริ่มต้นด้วยความโปร่งใส */
+            transform: translateY(-30px); /* เริ่มต้นที่ยกขึ้น */
+            animation: slideDown 0.5s forwards; /* การเคลื่อนไหว */
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .password-container {
+            position: relative;
+        }
+        .password-container span {
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
+        .btn-primary {
+            transition: transform 0.3s; /* เอฟเฟกต์การขยาย */
+        }
+        .btn-primary:hover {
+            transform: scale(1.05); /* ขยายปุ่มเมื่อเลื่อนเมาส์ */
+        }
+        .btn-secondary {
+            transition: background-color 0.3s; /* เอฟเฟกต์การเปลี่ยนสี */
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268; /* เปลี่ยนสีเมื่อเลื่อนเมาส์ */
+        }
+    </style>
+    <script>
+     function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const type = passwordField.type === 'password' ? 'text' : 'password';
+            passwordField.type = type;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            form.onsubmit = async function(event) {
+                event.preventDefault(); // ป้องกันการรีเฟรชหน้า
+
+                const formData = new FormData(form);
+                const response = await fetch('', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'สำเร็จ!',
+                        text: result.message || 'อัปเดตข้อมูลเรียบร้อยแล้ว',
+                        icon: 'success',
+                        confirmButtonText: 'ตกลง'
+                    }).then(() => {
+                        window.location.href = '/users'; // กลับไปยังหน้า users list
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'ผิดพลาด!',
+                        text: result.error || 'เกิดข้อผิดพลาดในการอัปเดตข้อมูล',
+                        icon: 'error',
+                        confirmButtonText: 'ตกลง'
+                    });
+                }
+            };
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">{{if .}}แก้ไขข้อมูล{{else}}Create User{{end}}</h1>
+        <form method="POST" action="">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" name="username" value="{{if .}}{{.Username}}{{end}}" required readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    </div>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text" onclick="togglePasswordVisibility()" style="cursor: pointer;"><i class="fas fa-eye"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="firstname">Firstname:</label>
+                <input type="text" class="form-control" name="firstname" value="{{if .}}{{.Firstname}}{{end}}">
+            </div>
+
+            <div class="form-group">
+                <label for="lastname">Lastname:</label>
+                <input type="text" class="form-control" name="lastname" value="{{if .}}{{.Lastname}}{{end}}">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" name="email" value="{{if .}}{{.Email}}{{end}}">
+            </div>
+
+            <div class="form-group">
+                <label for="birthdate">Birthdate:</label>
+                <input type="date" class="form-control" name="birthdate" value="{{if .}}{{.Birthdate}}{{end}}">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">บันทึก</button>
+        </form>
+        <a href="/users" class="btn btn-secondary btn-block mt-3">กลับสู่หน้าหลัก</a>
+    </div>
+</body>
+</html>

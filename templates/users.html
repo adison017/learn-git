@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <link rel="icon" href="https://it.msu.ac.th/wp-content/uploads/2017/01/cropped-Informatics_MSU_Logo.svg.png" type="image/png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Noto Sans Thai Looped", sans-serif;
+            background-image: url('https://images.pexels.com/photos/28228014/pexels-photo-28228014.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* ทำให้ภาพพื้นหลังไม่เคลื่อนที่ */
+            color: #ffffff;
+            overflow: hidden; /* ป้องกันการเลื่อน */
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .card {
+            background-color: rgba(15, 23, 65, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            padding: 20px;
+        }
+        .logout {
+            text-align: right;
+            position: fixed; /* ทำให้ปุ่ม logout อยู่ในตำแหน่งคงที่ */
+            top: 20px; /* ระยะห่างจากด้านบน */
+            right: 20px; /* ระยะห่างจากด้านขวา */
+        }
+        .btlogout {
+            background-color: rgba(11, 62, 172, 0.9);
+            border: none;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s; /* เอฟเฟกต์การเปลี่ยนสีและการขยาย */
+        }
+        .btlogout:hover {
+            background-color: #1b249c;
+            transform: scale(1.05); /* ขยายปุ่มเมื่อเลื่อนเมาส์ */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            color: #ffffff; /* สีของข้อความในตาราง */
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #c4c4c4; /* สีของเส้นขอบ */
+            transition: background-color 0.3s; /* เอฟเฟกต์เมื่อเลื่อนเมาส์ */
+        }
+        th {
+            background-color: rgba(11, 62, 172, 0.8);
+        }
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* สีพื้นหลังเมื่อเลื่อนเมาส์ */
+        }
+        .user-info {
+    position: fixed; /* ทำให้ user-info อยู่ในตำแหน่งคงที่ */
+    bottom: 20px; /* ระยะห่างจากด้านบน */
+    right: 20px; /* ระยะห่างจากด้านขวา */
+    width: auto; /* ปรับขนาดความกว้างตามเนื้อหา */
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.8); /* สีพื้นหลังเข้ม */
+    border-radius: 5px;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+    display: flex; /* จัดเรียงเนื้อหาในแนวนอน */
+    align-items: center; /* จัดแนวกลางในแนวตั้ง */
+}
+
+        .user-info i {
+            margin-right: 5px; /* เพิ่มช่องว่างระหว่างไอคอนกับข้อความ */
+        }
+        .btn btn-warning i {
+            margin-right: 5px; /* เพิ่มช่องว่างระหว่างไอคอนกับข้อความ */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="card">
+            <h1>โปรไฟล์ผู้ใช้</h1>
+            <div class="card-body">
+                <table>
+                    <tr>
+                        <th>Username</th>
+                        <th>Firstname</th>
+                        <th>Lastname</th>
+                        <th>Email</th>
+                        <th>Birthdate</th>
+                        <th>Actions</th>
+                    </tr>
+                    {{range .Users}}
+                    <tr>
+                        <td>{{.Username}}</td>
+                        <td>{{.Firstname}}</td>
+                        <td>{{.Lastname}}</td>
+                        <td>{{.Email}}</td>
+                        <td>{{.Birthdate}}</td>
+                        <td>
+                            <button class="btn btn-warning" onclick="window.location.href='/user/edituser?username={{.Username}}'"><i class="fa-solid fa-pen-to-square fa-bounce"></i>แก้ไข</button>
+                        </td>
+                    </tr>
+                    {{end}}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="logout">
+        <button class="btlogout" onclick="confirmLogout()"><i class="fa-solid fa-right-from-bracket fa-bounce"></i> ออกจากระบบ</button>
+    </div>
+
+    <div class="user-info">
+        <span style="margin-right: 10px;"><i class="fa-solid fa-user"></i> ชื่อผู้ใช้งาน: <strong>{{.LoggedInUser.Username}}</strong></span>
+        <span><i class="fa-solid fa-shield-alt"></i> สถานะ: <strong>{{.LoggedInUser.Status}}</strong></span>
+    </div>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmLogout() {
+            Swal.fire({
+                title: 'ต้องการออกจากระบบ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/logout";
+                }
+            });
+        }
+
+        function preventBack() {
+            window.history.pushState(null, "", window.location.href);
+            window.onpopstate = function() {
+                Swal.fire({
+                    title: 'ต้องการออกจากระบบ?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'ยืนยัน',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/logout"; // หากยืนยันให้ไปที่หน้า logout
+                    } else {
+                        // หากไม่ยืนยัน ให้กลับไปที่หน้าปัจจุบัน
+                        window.history.pushState(null, "", window.location.href);
+                    }
+                });
+            };
+        }
+
+        window.onload = function() {
+            preventBack();
+        };
+    </script>
+</body>
+</html>

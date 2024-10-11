@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <link rel="icon" href="https://it.msu.ac.th/wp-content/uploads/2017/01/cropped-Informatics_MSU_Logo.svg.png" type="image/png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Noto Sans Thai Looped", sans-serif;
+            background-image: url('https://images.pexels.com/photos/28228014/pexels-photo-28228014.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .card {
+            background-color: rgba(15, 23, 65, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            padding: 20px;
+        }
+        .logout {
+            text-align: right;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }
+        .btlogout {
+            background-color: rgba(11, 62, 172, 0.9);
+            border: none;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btlogout:hover {
+            background-color: #1b249c;
+            transform: scale(1.05);
+        }
+        .table-wrapper {
+            max-height: 300px; /* ตั้งค่าความสูงเพื่อแสดงแค่ 5 ลำดับ */
+            overflow-y: auto; /* เพิ่มการเลื่อนในแนวตั้ง */
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #ffffff;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #c4c4c4;
+            transition: background-color 0.3s;
+        }
+        th {
+            background-color: rgba(11, 62, 172, 0.8);
+        }
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .user-info {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: auto;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 5px;
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+        }
+        .user-info i {
+            margin-right: 5px; 
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        .action-buttons .btn {
+            width: 100%;
+            margin: 0 5px;
+        }
+        td.actions-column {
+            width: 186px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>รายชื่อผู้ใช้งาน</h1>
+            <div class="card-body ">
+                {{if .Search}}
+                <h2>ผลการค้นหาสำหรับ: {{.Search}}</h2>
+                {{end}}
+                <a href="/user/create" class="btn btn-success  float-right ml-3"><i class="fa-solid fa-user-plus fa-bounce"></i> เพิ่มผู้ใช้ใหม่</a>
+
+                    <div class="d-flex justify-content-between align-items-center ">
+                        <input type="text" id="searchInput" class="form-control mr-2" placeholder="ค้นหาผู้ใช้...">
+                        <button class="btn btn-primary mr-2" onclick="searchUsers()">ค้นหา</button> 
+                        <a href="/admin" class="btn btn-secondary"><i class="fa-solid fa-rotate-right"></i></a>
+                    </div>                
+            </div>
+                <div class="table-wrapper">
+                    <table>
+                        <tr>
+                            <th>Username</th>
+                            <th>Firstname</th>
+                            <th>Lastname</th>
+                            <th>Email</th>
+                            <th>Birthdate</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        {{range .Users}}
+                        <tr>
+                            <td>{{.Username}}</td>
+                            <td>{{.Firstname}}</td>
+                            <td>{{.Lastname}}</td>
+                            <td>{{.Email}}</td>
+                            <td>{{.Birthdate}}</td>
+                            <td>{{.Status}}</td>
+                            <td class="action-buttons actions-column">
+                                <button class="btn btn-warning d-flex align-items-center" onclick="window.location.href='/user/edit?username={{.Username}}'">
+                                    <i class="fa-solid fa-pen-to-square fa-bounce"></i> แก้ไข
+                                </button>
+                                <button class="btn btn-danger d-flex align-items-center" onclick="confirmDelete('{{.Username}}')">
+                                    <i class="fa-solid fa-trash mr-1"></i> ลบ
+                                </button>
+                            </td>
+                        </tr>
+                        {{end}}
+                        {{if eq (len .Users) 0}}
+                        <tr>
+                            <td colspan="7">ไม่พบผู้ใช้ที่ตรงกัน</td>
+                        </tr>
+                        {{end}}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="logout">
+        <button class="btlogout" onclick="confirmLogout()"><i class="fa-solid fa-right-from-bracket fa-bounce"></i> ออกจากระบบ</button>
+    </div>
+
+    <div class="user-info">
+        <span style="margin-right: 10px;"><i class="fa-solid fa-user"></i> ชื่อผู้ใช้งาน: <strong>{{.LoggedInUser.Username}}</strong></span>
+        <span><i class="fa-solid fa-shield-alt"></i> สถานะ: <strong>{{.LoggedInUser.Status}}</strong></span>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function searchUsers() {
+            let filter = document.getElementById('searchInput').value;
+            window.location.href = `/admin?search=${encodeURIComponent(filter)}`; // ส่งคำค้นหาผ่าน query string
+        }
+
+        function confirmLogout() {
+            Swal.fire({
+                title: 'ต้องการออกจากระบบ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/logout"; 
+                }
+            });
+        }
+
+        function confirmDelete(username) {
+            Swal.fire({
+                title: 'คุณแน่ใจหรือไม่?',
+                text: "คุณจะไม่สามารถคืนค่าผู้ใช้ที่ถูกลบได้!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ใช่, ลบเลย!',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/user/delete?username=${username}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json(); 
+                        } else {
+                            throw new Error('เกิดข้อผิดพลาดในการลบผู้ใช้');
+                        }
+                    })
+                    .then(data => {
+                        Swal.fire({
+                            title: 'สำเร็จ!',
+                            text: data.message || 'ลบผู้ใช้เสร็จสิ้นแล้ว',
+                            icon: 'success',
+                            confirmButtonText: 'ตกลง'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: 'เกิดข้อผิดพลาด!',
+                            text: error.message,
+                            icon: 'error',
+                            confirmButtonText: 'ตกลง'
+                        });
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>

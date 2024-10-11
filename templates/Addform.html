@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Add User</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" href="https://it.msu.ac.th/wp-content/uploads/2017/01/cropped-Informatics_MSU_Logo.svg.png" type="image/png">
+    <!-- ลิงก์ไปยัง Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- ลิงก์ไปยัง SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Noto Sans Thai Looped", sans-serif;
+            background-image: url('https://images.pexels.com/photos/28228014/pexels-photo-28228014.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            background-size: cover;
+            background-position: center;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            max-width: 600px;
+            width: 100%; /* ทำให้ฟอร์มมีความกว้างเต็มที่ */
+            padding: 40px; /* เพิ่มพื้นที่ภายใน */
+            background-color: rgba(15, 31, 66, 0.9); /* ทำให้มีพื้นหลังโปร่งแสง */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            opacity: 0; /* เริ่มต้นด้วยความโปร่งใส */
+            transform: translateY(-30px); /* เริ่มต้นที่ยกขึ้น */
+            animation: slideDown 0.5s forwards; /* การเคลื่อนไหว */
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1 class="text-center">เพิ่มผู้ใช้ใหม่</h1>
+        <form id="AddForm" method="post">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" name="username" id="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    </div>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text" onclick="togglePasswordVisibility()" style="cursor: pointer;"><i class="fas fa-eye"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="firstname">Firstname:</label>
+                <input type="text" class="form-control" name="firstname" id="firstname" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lastname">Lastname:</label>
+                <input type="text" class="form-control" name="lastname" id="lastname" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" name="email" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="birthdate">Birthdate:</label>
+                <input type="date" class="form-control" name="birthdate" id="birthdate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select class="form-control" name="status" id="status">
+                    {{range .Roles}}
+                    <option value="{{.Name}}">{{.Name}}</option>
+                    {{end}}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">สร้างผู้ใช้</button>
+        </form>
+        <a href="/admin" class="btn btn-secondary btn-block mt-3">กลับสู่หน้าหลัก</a>
+    </div>
+
+    <script>
+        document.getElementById('AddForm').onsubmit = function(event) {
+            event.preventDefault(); // ป้องกันการรีเฟรชหน้า
+
+            // ทำงานจำลองการส่งข้อมูลไปยังเซิร์ฟเวอร์
+            fetch('/user/create', {
+                method: 'POST',
+                body: new FormData(this)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // คืนค่า JSON หากสำเร็จ
+                } else {
+                    return response.json().then(errData => {
+                        throw new Error(errData.error || 'เกิดข้อผิดพลาดในการเพิ่มผู้ใช้');
+                    });
+                }
+            })
+            .then(data => {
+                // แสดง SweetAlert2 เมื่อเพิ่มข้อมูลสำเร็จ
+                Swal.fire({
+                    title: 'สำเร็จ!',
+                    text: data.message,
+                    icon: 'success',
+                    confirmButtonText: 'ตกลง'
+                }).then(() => {
+                    window.location.href = '/admin'; // รีเฟรชหน้าเว็บ
+                });
+            })
+            .catch(error => {
+                // แสดง SweetAlert2 เมื่อเกิดข้อผิดพลาด
+                Swal.fire({
+                    title: 'ผิดพลาด!',
+                    text: error.message || 'ไม่สามารถเพิ่มผู้ใช้ได้',
+                    icon: 'error',
+                    confirmButtonText: 'ตกลง'
+                });
+            });
+        };
+    </script>
+</body>
+</html>
