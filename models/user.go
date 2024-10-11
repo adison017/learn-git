@@ -67,7 +67,12 @@ func UserExists(username, email string) (bool, error) {
 }
 
 func GetAllUsers() ([]User, error) {
-    rows, err := db.DB.Query("SELECT username, password,firstname, lastname, email, birthdate, status FROM users")
+    rows, err := db.DB.Query(`SELECT username, password,firstname, lastname, email, birthdate, status FROM users ORDER BY 
+            CASE status 
+                WHEN 'admin' THEN 1 
+                ELSE 2 
+            END, 
+            dateTime`)
     if err != nil {
         return nil, err
     }
