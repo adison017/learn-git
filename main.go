@@ -17,12 +17,16 @@ func main() {
     // ตั้งค่า MIME type สำหรับไฟล์ CSS
     mime.AddExtensionType(".css", "text/css")
 
-    http.Handle("/", http.FileServer(http.Dir("./static"))) 
+    // ตั้งค่า FileServer สำหรับ static files
+    http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static")))) 
+
+    // Redirect root path ไปที่ /login
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        http.Redirect(w, r, "/login", http.StatusFound)
+    })
+
     // Routes
-    http.Handle("/lib/", http.StripPrefix("/lib/", http.FileServer(http.Dir("lib"))))
     http.HandleFunc("/login", handlers.LoginHandler)
-    
-    // ใช้ http.HandlerFunc เพื่อแปลงเป็น http.Handler
     http.HandleFunc("/register", handlers.RegisterHandler)
     http.Handle("/admin", handlers.CheckLogin(http.HandlerFunc(handlers.AdminHandler))) 
     http.Handle("/users", handlers.CheckLogin(http.HandlerFunc(handlers.ListUsersHandler))) 
@@ -32,6 +36,6 @@ func main() {
     http.Handle("/user/delete", handlers.CheckLogin(http.HandlerFunc(handlers.DeleteUserHandler))) 
     http.HandleFunc("/logout", handlers.LogoutHandler)
 
-    log.Println("Server started at :8080...")
+    log.Println("Server started!!")
     log.Fatal(http.ListenAndServe(":8080", nil))
 }
