@@ -5,7 +5,6 @@ import (
     "html/template"
     "github.com/gorilla/sessions"
     "project/models"
-    "golang.org/x/crypto/bcrypt" // เพิ่มบรรทัดนี้
     "encoding/json" // เพิ่มบรรทัดนี้
     "project/db"
  
@@ -342,7 +341,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
         }
 
         // เข้ารหัสรหัสผ่าน
-        hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+        // hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
         if err != nil {
             http.Error(w, "Failed to hash password", http.StatusInternalServerError)
             return
@@ -351,7 +350,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
         // สร้างผู้ใช้ใหม่
         user := models.User{
             Username:  username,
-            Password:  string(hashedPassword),
+            Password:  password,
             Firstname: firstname,
             Lastname:  lastname,
             Email:     email,
