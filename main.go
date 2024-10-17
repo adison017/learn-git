@@ -14,8 +14,6 @@ func main() {
     }
 
 
-    // ตั้งค่า FileServer สำหรับ static files
-    http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static")))) 
 
     // Redirect root path ไปที่ /login
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
