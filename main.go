@@ -2,7 +2,6 @@ package main
 
 import (
     "log"
-    "mime"
     "net/http"
     "project/handlers"
     "project/db"
@@ -14,8 +13,6 @@ func main() {
         log.Fatalf("Could not connect to database: %v", err)
     }
 
-    // ตั้งค่า MIME type สำหรับไฟล์ CSS
-    mime.AddExtensionType(".css", "text/css")
 
     // ตั้งค่า FileServer สำหรับ static files
     http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static")))) 

@@ -149,17 +149,6 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func EditUserHandler(w http.ResponseWriter, r *http.Request) {
     SetNoCacheHeaders(w)
-    // session, err := Store.Get(r, "session-name")
-    // if err != nil {
-    //     http.Error(w, "Failed to get session", http.StatusInternalServerError)
-    //     return
-    // }
-
-    // status, ok := session.Values["status"].(string)
-    // if !ok || status != "Admin" {
-    //     http.Redirect(w, r, "/users", http.StatusSeeOther)
-    //     return
-    // }
 
     if r.Method == http.MethodPost {
         // ดึงข้อมูลจากแบบฟอร์ม
